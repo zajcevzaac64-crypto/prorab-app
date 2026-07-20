@@ -3,133 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProRab — Умный калькулятор строительных смет</title>
-    <script src="https://jsdelivr.net"></script>
+    <title>ProRab — Калькулятор смет</title>
     <style>
-        body { background-color: #0B0F17 !important; color: #ffffff !important; font-family: sans-serif; }
-        .bg-glass { background-color: rgba(255, 255, 255, 0.03) !important; border: 1px solid rgba(255, 255, 255, 0.08) !important; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-        input { background-color: rgba(255, 255, 255, 0.05) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: white !important; outline: none; }
-        input:focus { border-color: #FF6B00 !important; }
-        .btn-orange { background-color: #FF6B00 !important; box-shadow: 0 4px 20px rgba(255, 107, 0, 0.25); }
+        body { background: #0b0f17; color: white; font-family: sans-serif; margin: 0; padding: 15px; box-sizing: border-box; }
+        .container { max-width: 1300px; margin: 0 auto; }
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; margin-bottom: 20px; }
+        .logo { color: #FF6B00; font-size: 22px; font-weight: 900; }
+        .grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 1024px) { .grid { grid-template-columns: 4fr 8fr; } }
+        .card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px); padding: 20px; border-radius: 16px; margin-bottom: 15px; }
+        h3 { font-size: 14px; margin: 0 0 10px 0; border-left: 2px solid #FF6B00; padding-left: 8px; }
+        .ins { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        label { display: block; font-size: 10px; color: #9ca3af; margin-bottom: 2px; }
+        input { width: 100%; bg: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 6px; color: white; font-size: 13px; box-sizing: border-box; }
+        input:focus { border-color: #FF6B00; outline: none; }
+        .btn { background: #FF6B00; color: white; border: none; font-weight: 700; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 12px; }
+        .tips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+        .tip-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 6px 0; font-size: 11px; border-radius: 6px; cursor: pointer; }
+        .tbs { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        @media (min-width: 768px) { .tbs { grid-template-columns: 1fr 1fr; } }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: left; }
+        th { color: #9ca3af; padding-bottom: 4px; border-b: 1px solid rgba(255,255,255,0.1); }
+        td { padding: 6px 0; border-b: 1px solid rgba(255,255,255,0.05); }
+        .flex-row { display: grid; grid-template-columns: 1fr; gap: 10px; margin: 15px 0; }
+        @media (min-width: 768px) { .flex-row { grid-template-columns: 7fr 5fr; align-items: center; } }
+        .ex-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+        .f-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 8px; border-radius: 8px; font-size: 11px; cursor: pointer; }
+        .f-excel { color: #FF6B00; font-weight: 700; background: rgba(255,107,0,0.1); }
+        .totals { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        @media (min-width: 640px) { .totals { grid-template-columns: repeat(3, 1fr); } }
+        .t-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 10px; text-align: center; }
+        .t-card span { display: block; font-size: 9px; color: #9ca3af; text-transform: uppercase; }
+        .t-card.g { background: #FF6B00; border: none; }
+        .rel { position: relative; }
+        #searchSuggestions { position: absolute; left: 0; right: 0; top: 100%; background: #0b0f17; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; z-index: 100; max-h: 150px; overflow-y: auto; }
+        .hidden { display: none !important; }
     </style>
 </head>
-<body class="bg-[#0B0F17] text-white p-4 md:p-8">
-    <div class="max-w-[1600px] mx-auto space-y-6">
-        <header class="w-full py-4 flex items-center justify-between border-b border-white/5">
-            <div class="text-[#FF6B00] text-2xl font-black">ProRab</div>
-            <div class="flex items-center space-x-4">
-                <button class="btn-orange text-white font-bold text-xs px-4 py-2 rounded-xl">Личный кабинет</button>
-            </div>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">ProRab</div>
+            <div class="sub-logo" style="font-size:11px; color:#9ca3af;">Сметы для строителей</div>
+            <div><button class="btn">Личный кабинет</button></div>
         </header>
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div class="lg:col-span-4 space-y-6">
-                <div class="bg-glass p-6 rounded-3xl space-y-3">
-                    <h1 class="text-2xl font-black">Автоматизируйте расчеты <br /><span class="text-[#FF6B00]">на каждом проекте</span></h1>
+
+        <div class="grid">
+            <!-- СТОЛБЕЦ 1 -->
+            <div>
+                <div class="card">
+                    <h1 style="font-size:22px; color:#FF6B00; margin:0 0 5px 0;">ПроРаб</h1>
+                    <p style="margin:0; font-size:11px;">Автоматический расчет смет и подбор материалов.</p>
                 </div>
-                <div class="bg-glass p-6 rounded-3xl space-y-4">
-                    <h3 class="text-sm font-bold text-gray-200">Размеры объекта (в метрах)</h3>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-[10px] text-gray-400">Длина</label>
-                            <input type="number" id="length" class="w-full rounded-xl px-3 py-2">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] text-gray-400">Ширина</label>
-                            <input type="number" id="width" class="w-full rounded-xl px-3 py-2">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] text-gray-400">Высота</label>
-                            <input type="number" id="height" class="w-full rounded-xl px-3 py-2">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] text-gray-400">Толщина новых стен (мм)</label>
-                            <input type="number" id="wallThickness" value="120" class="w-full rounded-xl px-3 py-2">
-                        </div>
+                <div class="card">
+                    <h3>Размеры объекта (м)</h3>
+                    <div class="ins">
+                        <div><label>Длина</label><input type="number" id="length" value="0"></div>
+                        <div><label>Ширина</label><input type="number" id="width" value="0"></div>
                     </div>
-                    <div>
-                        <label class="block text-[10px] text-gray-400">Длина новых перегородок (м)</label>
-                        <input type="number" id="newWallLength" class="w-full rounded-xl px-3 py-2">
+                    <div class="ins">
+                        <div><label>Высота</label><input type="number" id="height" value="0"></div>
+                        <div><label>Стены (мм)</label><input type="number" id="wallThickness" value="120"></div>
                     </div>
+                    <div style="margin-top:5px;"><label>Новые стены (м)</label><input type="number" id="newWallLength" value="0"></div>
                 </div>
-                <div class="bg-glass p-5 rounded-3xl space-y-3">
-                    <h4 class="text-xs font-bold">☕ На чай разработчику</h4>
-                    <div class="grid grid-cols-4 gap-1.5">
-                        <button onclick="selectTip(100, this)" class="tip-btn border border-white/10 py-1.5 text-xs font-bold rounded-lg">100 ₽</button>
-                        <button onclick="selectTip(200, this)" class="tip-btn border border-white/10 py-1.5 text-xs font-bold rounded-lg">200 ₽</button>
-                        <button onclick="selectTip(300, this)" class="tip-btn border border-white/10 py-1.5 text-xs font-bold rounded-lg">300 ₽</button>
-                        <button onclick="selectTip(500, this)" class="tip-btn border border-white/10 py-1.5 text-xs font-bold rounded-lg">500 ₽</button>
+                <div class="card">
+                    <h3>☕ На чай разработчику</h3>
+                    <p style="font-size:11px;">Разработчик один знает всю боль создания смет и решил помочь коллегам.</p>
+                    <div class="tips">
+                        <button onclick="selectTip(100, this)" class="tip-btn">100 ₽</button>
+                        <button onclick="selectTip(200, this)" class="tip-btn" style="border-color:#FF6B00; color:#FF6B00;">200 ₽</button>
+                        <button onclick="selectTip(300, this)" class="tip-btn">300 ₽</button>
+                        <button onclick="selectTip(500, this)" class="tip-btn">500 ₽</button>
                     </div>
                 </div>
             </div>
-            <div class="lg:col-span-8 space-y-4">
-                <div class="bg-glass p-4 relative">
-                    <input type="text" id="workSearch" placeholder="🔍 Начните вводить работу (например: Штукатурка, Плитка, Обои...)" class="w-full rounded-xl px-4 py-2.5 text-sm">
-                    <div id="searchSuggestions" class="absolute left-4 right-4 mt-2 bg-[#0B0F17] border border-white/10 rounded-xl shadow-2xl z-50 max-h-60 overflow-y-auto hidden"></div>
+
+            <!-- СТОЛБЕЦ 2 -->
+            <div>
+                <div class="card rel">
+                    <input type="text" id="workSearch" placeholder="🔍 Поиск работы (Штукатурка, Плитка, Обои...)">
+                    <div id="searchSuggestions" class="hidden"></div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-glass p-4 min-h-[200px]">
-                        <h3 class="text-xs font-bold text-gray-300 mb-2">Выбранные работы (Авто-объем)</h3>
-                        <table class="w-full text-left text-xs border-collapse">
-                            <thead>
-                                <tr class="text-gray-400"><th class="py-1">Работа</th><th class="text-center">Объем</th><th class="text-center">Цена</th><th class="text-right">Итого</th></tr>
-                            </thead>
-                            <tbody id="worksTableBody">
-                                <tr class="text-gray-500"><td colspan="4" class="py-4 text-center">Используйте поиск выше</td></tr>
-                            </tbody>
+                <div class="tbs">
+                    <div class="card" style="min-height:180px; margin:0;">
+                        <h3>Выбранные работы</h3>
+                        <table>
+                            <thead><tr><th>Работа</th><th style="text-align:center">Объем</th><th style="text-align:center">Цена</th><th style="text-align:right">Итого</th></tr></thead>
+                            <tbody id="worksTableBody"><tr><td colspan="4" style="text-align:center; color:#9ca3af; padding-top:20px">Используйте поиск выше</td></tr></tbody>
                         </table>
                     </div>
-                    <div class="bg-glass p-4 min-h-[200px]">
-                        <h3 class="text-xs font-bold text-gray-300 mb-2">Авторасчет материалов (Умный подбор)</h3>
-                        <table class="w-full text-left text-xs border-collapse">
-                            <thead>
-                                <tr class="text-gray-400"><th class="py-1">Материал</th><th class="text-center">Кол-во</th><th class="text-center">Цена</th><th class="text-right">Итого</th></tr>
-                            </thead>
-                            <tbody id="materialsTableBody">
-                                <tr class="text-gray-500"><td colspan="4" class="py-4 text-center">Посчитается автоматически</td></tr>
-                            </tbody>
+                    <div class="card" style="min-height:180px; margin:0;">
+                        <h3>Авторасчет материалов</h3>
+                        <table>
+                            <thead><tr><th>Материал</th><th style="text-align:center">Кол-во</th><th style="text-align:center">Цена</th><th style="text-align:right">Итого</th></tr></thead>
+                            <tbody id="materialsTableBody"><tr><td colspan="4" style="text-align:center; color:#9ca3af; padding-top:20px">Посчитается автоматически</td></tr></tbody>
                         </table>
                     </div>
                 </div>
-                <div class="bg-glass p-4 space-y-1">
-                    <div class="flex items-center justify-between border-b border-white/5 pb-1">
-                        <span class="text-xs font-bold text-cyan-400">🤖 ИИ-Ассистент ПроРаб</span>
-                        <button onclick="runAIAudit()" class="text-[10px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-2 py-0.5 rounded">Запустить аудит</button>
+                <div class="flex-row">
+                    <div class="card" style="margin:0; padding:10px;">
+                        <div style="display:flex; justify-content:between; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:3px; margin-bottom:3px;">
+                            <span style="font-size:11px; font-weight:700; color:#22d3ee">🤖 ИИ-Ассистент</span>
+                            <button onclick="runAIAudit()" style="background:none; border:1px solid #22d3ee; color:#22d3ee; font-size:9px; border-radius:4px; cursor:pointer">Аудит</button>
+                        </div>
+                        <div id="aiResponseText" style="font-size:10px; color:#9ca3af;">Нажмите аудит.</div>
                     </div>
-                    <div id="aiResponseText" class="text-[11px] text-gray-400 min-h-[30px]">Нажмите кнопку аудита выше.</div>
+                    <div class="ex-btns">
+                        <button onclick="alert('PDF готов')" class="f-btn">📄 PDF</button>
+                        <button onclick="alert('Word готов')" class="f-btn">📝 Word</button>
+                        <button onclick="alert('Excel готов')" class="f-btn f-excel">📊 Excel</button>
+                    </div>
                 </div>
-                <div class="grid grid-cols-3 gap-2">
-                    <button onclick="alert('PDF сформирован')" class="bg-white/5 border border-white/10 p-2 rounded-xl text-center text-xs">📄 PDF</button>
-                    <button onclick="alert('Word сохранен')" class="bg-white/5 border border-white/10 p-2 rounded-xl text-center text-xs">📝 Word</button>
-                    <button onclick="alert('Excel скачан')" class="bg-[#FF6B00]/10 border border-[#FF6B00]/20 p-2 rounded-xl text-center text-xs font-bold text-[#FF6B00]">📊 Excel</button>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div class="bg-glass p-3 text-center">
-                        <span class="block text-[10px] text-gray-400">Всего по работам</span>
-                        <span id="totalWorksCost" class="text-base font-black">0 ₽</span>
-                    </div>
-                    <div class="bg-glass p-3 text-center">
-                        <span class="block text-[10px] text-gray-400">Всего по материалам</span>
-                        <span id="totalMaterialsCost" class="text-base font-black">0 ₽</span>
-                    </div>
-                    <div class="bg-[#FF6B00] p-3 rounded-xl text-center">
-                        <span class="block text-[10px] text-orange-100">Общая сумма</span>
-                        <span id="grandTotalCost" class="text-base font-black">0 ₽</span>
-                    </div>
+                <div class="totals">
+                    <div class="t-card"><span>Работы</span><strong id="totalWorksCost">0 ₽</strong></div>
+                    <div class="t-card"><span>Материалы</span><strong id="totalMaterialsCost">0 ₽</strong></div>
+                    <div class="t-card g"><span>Итого</span><strong id="grandTotalCost">0 ₽</strong></div>
                 </div>
             </div>
         </div>
     </div>
-    <div id="paywallModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-glass max-w-sm w-full p-6 text-center space-y-4 border border-[#FF6B00]/30">
-            <h3 class="text-base font-black">Лимит бесплатной версии</h3>
-            <button onclick="buyPremium()" class="w-full bg-[#FF6B00] py-2.5 rounded-xl font-bold text-sm">Оформить подписку</button>
+
+    <div id="paywallModal" class="hidden" style="position:fixed; inset:0; z-index:1000; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.85);">
+        <div class="card" style="max-width:280px; text-align:center; border-color:#FF6B00;">
+            <h3>Лимит бесплатной версии</h3>
+            <p>Вы создали первую смету! Оформите подписку "Профи".</p>
+            <div style="color:#FF6B00; font-weight:900; margin-bottom:10px">990 ₽ / мес</div>
+            <button onclick="buyPremium()" class="btn" style="width:100%">Подписаться</button>
         </div>
     </div>
+
     <script src="app.js"></script>
     <script>
         function selectTip(amount, element) {
-            document.querySelectorAll('.tip-btn').forEach(btn => btn.className = "tip-btn border border-white/10 bg-white/5 py-1.5 text-xs font-bold rounded-lg");
-            element.className = "tip-btn border border-[#FF6B00] bg-[#FF6B00]/20 text-[#FF6B00] py-1.5 text-xs font-bold rounded-lg";
+            document.querySelectorAll('.tip-btn').forEach(btn => { btn.style.borderColor = 'rgba(255,255,255,0.1)'; btn.style.color = 'white'; });
+            element.style.borderColor = '#FF6B00'; element.style.color = '#FF6B00';
             alert("Вы поддержали разработчика на " + amount + " ₽. Спасибо!");
         }
     </script>
